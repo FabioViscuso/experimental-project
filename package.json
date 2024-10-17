@@ -1,11 +1,80 @@
 {
   "name": "root",
+  "description": "Movia UI Next Monorepo",
+  "author": "Movia SpA",
   "private": true,
   "workspaces": [
     "packages/*"
   ],
-  "dependencies": {},
+  "scripts": {
+    "changelog": "changelog $RELEASE --repo-url=https://ci.movia.link/moviaui/movia-ui --allow-unknown=false --exclude=other && git add CHANGELOG.md && git commit -m 'docs: Updated CHANGELOG.md'",
+    "bootstrap": "lerna bootstrap --hoist",
+    "lint": "eslint . --ext ts --ext tsx",
+    "setup": "npm install --legacy-peer-deps  && npm run bootstrap",
+    "push-tags": "git fetch && git push origin && git push origin --tags",
+    "release:major": "npm run buildAndCommit && RELEASE='--major' npm run changelog && lerna publish major",
+    "release:minor": "npm run buildAndCommit && RELEASE='--minor' npm run changelog && lerna publish minor",
+    "release:patch": "npm run buildAndCommit && RELEASE='--patch'&& lerna publish  --force-publish patch",
+    "test:unit": "lerna run test:unit --stream",
+    "build": "npm run checkPreRelease && lerna run build --stream",
+    "build-nx": "nx run-many --target=build",
+    "fastBuild": "npm run checkPreRelease && lerna run build --stream --since=HEAD",
+    "buildAndCommit": "npm run build-nx && git add . && git commit -m \"build: Build\" --allow-empty",
+    "deleteNodeModules": "rm -rf **/*/node_modules **/*/package-lock.json node_modules package-lock.json",
+    "cleanInstall": "npm run deleteNodeModules && npm run setup",
+    "exitOnGitActiveChanges": "exit $(git status -s | wc -l)",
+    "checkPreRelease": "npm run exitOnGitActiveChanges && echo \"Ok check pre-release\" || ( echo \"Stop pre-release\" && exit 1 )"
+  },
   "devDependencies": {
-    "lerna": "^8.1.8"
+    "lerna": "^8.1.8",
+    "ts-node": "10.9.1",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.13"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ],
+    "rules": {
+      "subject-case": [
+        2,
+        "always",
+        "sentence-case"
+      ],
+      "scope-enum": [
+        2,
+        "always",
+        [
+          "connection-manager",
+          "token-manager",
+          "general"
+        ]
+      ]
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "semi": false,
+    "singleQuote": true,
+    "printWidth": 140,
+    "importOrder": [
+      "@",
+      "src",
+      "[./]"
+    ]
   }
 }
