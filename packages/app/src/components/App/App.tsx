@@ -1,37 +1,83 @@
-import reactLogo from '../../assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { storeHooks } from '../../../../state'
 import { resetMessage } from '../../../../state/lib/slices/commonSlice'
 import { useWebSocketConnection } from '../../../../connections/src'
+import { useEffect } from 'react'
+
+const treeNames = [
+  'Oak',
+  'Maple',
+  'Pine',
+  'Birch',
+  'Willow',
+  'Cherry',
+  'Spruce',
+  'Cedar',
+  'Redwood',
+  'Magnolia',
+  'Ash',
+  'Elm',
+  'Hickory',
+  'Beech',
+  'Fir',
+  'Linden',
+  'Sycamore',
+  'Poplar',
+  'Cypress',
+  'Douglas Fir',
+  'Walnut',
+  'Chestnut',
+  'Juniper',
+  'Alder',
+  'Teak',
+  'Aspen',
+  'Hackberry',
+  'Yew',
+  'Tamarack',
+  'Sassafras',
+]
 
 export const App = () => {
   const stateMessage = storeHooks.useAppSelector((state) => state.common.message)
+  const dispatch = storeHooks.useAppDispatch()
 
-  const { isConnectionOpen, sendWSMessage, closeWSConnection } = useWebSocketConnection({
+  const { isConnectionOpen, sendWSMessage, closeWSConnection, startWSConnection } = useWebSocketConnection({
     url: 'wss://echo.websocket.org',
   })
 
+  useEffect(() => {
+    const randomTreeName = () => {
+      const index = Math.floor(Math.random() * treeNames.length)
+      return treeNames[index]
+    }
+
+    let intervalID: NodeJS.Timeout
+    if (isConnectionOpen) {
+      intervalID = setInterval(() => {
+        sendWSMessage(randomTreeName())
+      }, 3000)
+    }
+    return () => clearInterval(intervalID)
+  }, [isConnectionOpen, sendWSMessage])
+
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
+      <h1>Lerna + Storybook + WS Playground</h1>
       <div className="card">
-        <button onClick={() => sendWSMessage()}>Send message</button>
-        <button onClick={() => resetMessage()}>Reset message</button>
+        <button onClick={() => sendWSMessage('Message from button')}>Send message</button>
+        <p></p>
+        <button onClick={() => dispatch(resetMessage())}>Reset message</button>
+        <p></p>
+        <button onClick={() => startWSConnection()}>Restart Connection</button>
+        <p></p>
         <button onClick={() => closeWSConnection()}>Close Connection</button>
 
-        <div>
+        <p>
           <span>Connection Status: </span> <span>{isConnectionOpen ? '🟢' : '🔴'}</span>
-        </div>
-        <p>{stateMessage || 'No message yet'}</p>
+        </p>
+        <p>
+          WS Message: <span style={{ borderBottom: '2px solid lightgreen' }}>{stateMessage || 'No message yet'}</span>
+        </p>
       </div>
       <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
     </>
