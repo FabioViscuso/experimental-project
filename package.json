@@ -1,7 +1,7 @@
 {
   "name": "root",
-  "description": "Movia UI Next Monorepo",
-  "author": "Movia SpA",
+  "description": "Test",
+  "author": "Fabio V.",
   "private": true,
   "workspaces": [
     "packages/*"

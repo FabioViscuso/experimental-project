@@ -1,14 +1,14 @@
-import { App } from './App'
-import './App.css'
-import './index.css'
+import { Root } from './Root'
+import '../App/App.css'
+import '../App/index.css'
 import type { Meta, StoryObj } from '@storybook/react'
 
-const meta: Meta<typeof App> = {
-  component: App,
+const meta: Meta<typeof Root> = {
+  component: Root,
 }
 
 export default meta
-type Story = StoryObj<typeof App>
+type Story = StoryObj<typeof Root>
 
 export const MainWrapper: Story = {
   args: {

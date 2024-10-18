@@ -1,0 +1,11 @@
+[NX Daemon Server] - 2024-10-17T14:46:26.579Z - Started listening on: /tmp/7cf7f48eaecd7e09cdc4/d.sock
+[NX Daemon Server] - 2024-10-17T14:46:26.581Z - [WATCHER]: Subscribed to changes within: /home/fabio/Documents/work/experimental-spyder-rebuild (native)
+[NX Daemon Server] - 2024-10-17T14:46:26.584Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-10-17T14:46:26.585Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-10-17T14:46:26.587Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-10-17T14:46:26.590Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX Daemon Server] - 2024-10-17T14:46:26.591Z - Done responding to the client Shutdown initiated
+[NX Daemon Server] - 2024-10-17T14:46:26.591Z - Handled FORCE_SHUTDOWN. Handling time: 0. Response time: 1.
+[NX Daemon Server] - 2024-10-17T14:46:26.592Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-10-17T14:46:26.593Z - [WATCHER]: Stopping the watcher for /home/fabio/Documents/work/experimental-spyder-rebuild (sources)
+[NX Daemon Server] - 2024-10-17T14:46:26.593Z - [WATCHER]: Stopping the watcher for /home/fabio/Documents/work/experimental-spyder-rebuild (outputs)
