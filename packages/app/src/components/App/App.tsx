@@ -2,63 +2,23 @@ import './App.css'
 import { storeHooks } from '../../../../state'
 import { resetMessage } from '../../../../state/lib/slices/commonSlice'
 import { useWebSocketConnection } from '../../../../connections/src'
-import { useEffect } from 'react'
-
-const treeNames = [
-  'Oak',
-  'Maple',
-  'Pine',
-  'Birch',
-  'Willow',
-  'Cherry',
-  'Spruce',
-  'Cedar',
-  'Redwood',
-  'Magnolia',
-  'Ash',
-  'Elm',
-  'Hickory',
-  'Beech',
-  'Fir',
-  'Linden',
-  'Sycamore',
-  'Poplar',
-  'Cypress',
-  'Douglas Fir',
-  'Walnut',
-  'Chestnut',
-  'Juniper',
-  'Alder',
-  'Teak',
-  'Aspen',
-  'Hackberry',
-  'Yew',
-  'Tamarack',
-  'Sassafras',
-]
+import { useState } from 'react'
 
 export const App = () => {
   const stateMessage = storeHooks.useAppSelector((state) => state.common.message)
   const dispatch = storeHooks.useAppDispatch()
 
+  const [dataType, setDataType] = useState<'trees' | 'fruits'>('trees')
+
   const { isConnectionOpen, sendWSMessage, closeWSConnection, startWSConnection } = useWebSocketConnection({
-    url: 'wss://echo.websocket.org',
+    url: `ws://127.0.0.1:8081/?type=${dataType}`,
   })
 
-  useEffect(() => {
-    const randomTreeName = () => {
-      const index = Math.floor(Math.random() * treeNames.length)
-      return treeNames[index]
-    }
-
-    let intervalID: NodeJS.Timeout
-    if (isConnectionOpen) {
-      intervalID = setInterval(() => {
-        sendWSMessage(randomTreeName())
-      }, 3000)
-    }
-    return () => clearInterval(intervalID)
-  }, [isConnectionOpen, sendWSMessage])
+  const handleChangeDataType = (type: 'trees' | 'fruits') => {
+    closeWSConnection()
+    setDataType(() => type)
+    startWSConnection()
+  }
 
   return (
     <>
@@ -66,20 +26,27 @@ export const App = () => {
       <div className="card">
         <button onClick={() => sendWSMessage('Message from button')}>Send message</button>
         <p></p>
-        <button onClick={() => dispatch(resetMessage())}>Reset message</button>
+        <button onClick={() => handleChangeDataType('trees')}>Request random trees</button>
+        <p></p>
+        <button onClick={() => handleChangeDataType('fruits')}>Request random fruits</button>
+        <p></p>
+        <button onClick={() => dispatch(resetMessage())}>Reset Message</button>
         <p></p>
         <button onClick={() => startWSConnection()}>Restart Connection</button>
         <p></p>
         <button onClick={() => closeWSConnection()}>Close Connection</button>
 
         <p>
-          <span>Connection Status: </span> <span>{isConnectionOpen ? '🟢' : '🔴'}</span>
+          <span>Connection Status: </span>
+          <span>{isConnectionOpen ? '🟢' : '🔴'}</span>
         </p>
         <p>
-          WS Message: <span style={{ borderBottom: '2px solid lightgreen' }}>{stateMessage || 'No message yet'}</span>
+          Socket Message: <span>{dataType === 'trees' ? '🌳' : '🍑'} </span>{' '}
+          <span style={{ borderBottom: `2px solid ${dataType === 'trees' ? 'lightgreen' : 'orangered'}` }}>
+            {stateMessage || 'No message yet'}
+          </span>
         </p>
       </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
     </>
   )
 }
